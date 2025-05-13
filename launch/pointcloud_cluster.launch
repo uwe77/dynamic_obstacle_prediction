@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="veh" default="js"/>
+  
+  <node ns="$(arg veh)" pkg="dynamic_obstacle_prediction" type="pointcloud_cluster" name="$(arg veh)_pointcloud_cluster" output="screen">
+    <remap from="/lidar_points" to="/$(arg veh)/velodyne/lidar_crop" />
+    <remap from="/pose_in" to="/gazebo/$(arg veh)/pose" />
+    <param name="lidar_frame" value="js/front_lidar_link"/>
+    <param name="z_cluster_tolerance" value="6.0"/>
+    <param name="xy_cluster_tolerance" value="6.0"/>
+    <param name="publish_rate" value="10.0"/>
+    <param name="publish_clusters" value="false"/>
+    <param name="xy_pedding_range" value="10"/>
+  </node>
+
+  <node ns="$(arg veh)" pkg="dynamic_obstacle_prediction" type="obstacle_predictor_node" name="$(arg veh)_obstacle_predictor_node" output="screen">
+    <remap from="/cluster_markers" to="/cluster_markers" />
+    <remap from="/pose_in" to="/gazebo/$(arg veh)/pose" />
+    <param name="prediction_dt" value="2.0"/>
+    <param name="measurement_noise" value="5.0"/>
+    <param name="process_noise" value="25.0"/>
+    <param name="publish_rate" value="50.0"/>
+
+  </node>
+</launch>
