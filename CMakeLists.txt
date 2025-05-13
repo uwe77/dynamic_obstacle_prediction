@@ -8,11 +8,8 @@ project(dynamic_obstacle_prediction)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  dynamic_reconfigure
-  gazebo_msgs
   geometry_msgs
   message_generation
-  nav_msgs
   pcl_conversions
   pcl_ros
   roscpp
@@ -23,7 +20,6 @@ find_package(catkin REQUIRED COMPONENTS
   pointcloud_to_laserscan
 )
 
-find_package(OpenCV REQUIRED)
 find_package(PCL REQUIRED)
 
 
@@ -80,7 +76,7 @@ find_package(PCL REQUIRED)
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   gazebo_msgs#   geometry_msgs#   nav_msgs#   sensor_msgs#   std_msgs#   visualization_msgs
+#   geometry_msgs#   sensor_msgs#   std_msgs#   visualization_msgs
 # )
 
 ################################################
@@ -116,15 +112,12 @@ catkin_package(
   CATKIN_DEPENDS
   sensor_msgs
   geometry_msgs
-  nav_msgs
   pcl_conversions
   pcl_ros
   roscpp
   rospy
-  dynamic_reconfigure
   visualization_msgs
   std_msgs
-  gazebo_msgs
 )
 
 ###########
@@ -135,7 +128,6 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
   "${PROJECT_SOURCE_DIR}/include"
   /usr/local/include # Location when using 'make system_install'
@@ -229,8 +221,10 @@ include_directories(${EIGEN3_INCLUDE_DIRS})
 
 add_executable(pointcloud_cluster src/pointcloud_cluster.cpp)
 add_executable(obstacle_predictor_node src/dynamic_obstacle_prediction_via_kalman_filter.cpp)
+add_executable(local_obstacle_predictor src/local_prediction_via_kalman_filter.cpp)
 target_link_libraries(pointcloud_cluster ${catkin_LIBRARIES})
 target_link_libraries(obstacle_predictor_node ${catkin_LIBRARIES})
+target_link_libraries(local_obstacle_predictor ${catkin_LIBRARIES})
 ## Add gtest based cpp test target and link libraries
 # catkin_add_gtest(${PROJECT_NAME}-test test/test_js_lidar_crop.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
