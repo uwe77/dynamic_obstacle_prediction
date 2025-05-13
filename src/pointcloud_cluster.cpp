@@ -294,8 +294,7 @@ private:
         t.color.a = 1.0f;
         std::ostringstream ss;
         ss << "ID:"<<tr.id<<" ("<<std::fixed<<std::setprecision(2)
-           << t_global.x()<<","<<t_global.y()<<") yaw:"<<std::fixed<<std::setprecision(1)
-           <<(global_yaw*180.0/M_PI)<<"°";
+           << t_global.x()<<","<<t_global.y()<<")";
         t.text     = ss.str();
         t.lifetime = ros::Duration(0);
         ma.markers.push_back(t);
