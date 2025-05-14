@@ -1,10 +1,8 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="veh" default="js"/>
-  
-  <node ns="$(arg veh)" pkg="dynamic_obstacle_prediction" type="pointcloud_cluster" name="$(arg veh)_pointcloud_cluster" output="screen">
-    <remap from="/lidar_points" to="/$(arg veh)/velodyne/lidar_crop" />
-    <remap from="/pose_in" to="/gazebo/$(arg veh)/pose" />
+  <node pkg="dynamic_obstacle_prediction" type="pointcloud_cluster" name="pointcloud_cluster_node" output="screen">
+    <remap from="/lidar_points" to="/js/velodyne/lidar_crop" />
+    <remap from="/pose_in" to="/gazebo/js/pose" />
     <param name="lidar_frame" value="js/front_lidar_link"/>
     <param name="z_cluster_tolerance" value="6.0"/>
     <param name="xy_cluster_tolerance" value="6.0"/>

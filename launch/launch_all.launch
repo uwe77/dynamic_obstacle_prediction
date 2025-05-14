@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find dynamic_obstacle_prediction)/launch/pointcloud_cluster.launch" />
+    <include file="$(find dynamic_obstacle_prediction)/launch/fov_obstacle_predictor.launch" />
+    <include file="$(find dynamic_obstacle_prediction)/launch/dynamic_obstacle_predictor.launch" />
+</launch>

@@ -1,12 +1,9 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="veh" default="js"/>
-  
-  <node ns="$(arg veh)" pkg="dynamic_obstacle_prediction" type="fov_obstacle_predictor_node" name="$(arg veh)_fov_obstacle_predictor_node" output="screen">
-    <remap from="/pose_in" to="/gazebo/$(arg veh)/pose" />
+  <node pkg="dynamic_obstacle_prediction" type="fov_obstacle_predictor_node" name="fov_obstacle_predictor_node" output="screen">
+    <remap from="/pose_in" to="/gazebo/js/pose" />
     <remap from="/markers_in" to="/predicted_markers" />
     <remap from="/predicted_markers" to="/predicted_local_markers" />
-    <param name="rosconsole_config_file" value="$(find dynamic_obstacle_prediction)/config/rosconsole.config"/>
     <param name="prediction_dt" value="2.0"/>
     <param name="measurement_noise" value="5.0"/>
     <param name="process_noise" value="25.0"/>
