@@ -44,18 +44,18 @@ struct Track {
   visualization_msgs::Marker marker;
 };
 
-class ObstaclePredictor {
+class DynamicObstaclePredictor {
 public:
-  ObstaclePredictor() {
+  DynamicObstaclePredictor() {
     ros::NodeHandle pnh("~");
     pnh.param("measurement_noise", meas_noise_,   1.0);
     pnh.param("process_noise",     proc_noise_,    0.1);
     pnh.param("prediction_dt",     pred_dt_,       0.5);
     pnh.param("publish_rate",      publish_rate_, 10.0);
 
-    markers_sub_ = nh_.subscribe("/markers_in", 10, &ObstaclePredictor::clusterCB, this);
+    markers_sub_ = nh_.subscribe("/markers_in", 10, &DynamicObstaclePredictor::clusterCB, this);
     pred_pub_    = nh_.advertise<visualization_msgs::MarkerArray>("/predicted_markers", 10);
-    publish_timer_ = nh_.createTimer(ros::Duration(1.0 / publish_rate_), &ObstaclePredictor::publishTimerCB, this);
+    publish_timer_ = nh_.createTimer(ros::Duration(1.0 / publish_rate_), &DynamicObstaclePredictor::publishTimerCB, this);
   }
 
 private:
@@ -143,8 +143,8 @@ private:
 };
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "obstacle_predictor_node");
-  ObstaclePredictor node;
+  ros::init(argc, argv, "dynamic_obstacle_predictor_node");
+  DynamicObstaclePredictor node;
   ros::spin();
   return 0;
 }

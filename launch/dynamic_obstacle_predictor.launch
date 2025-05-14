@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="veh" default="js"/>
+  
+  <node ns="$(arg veh)" pkg="dynamic_obstacle_prediction" type="dynamic_obstacle_predictor_node" name="$(arg veh)_dynamic_obstacle_predictor_node" output="screen">
+    <remap from="/markers_in" to="/cluster_markers" />
+    <remap from="/predicted_markers" to="/predicted_markers" />
+    <param name="prediction_dt" value="2.0"/>
+    <param name="measurement_noise" value="5.0"/>
+    <param name="process_noise" value="25.0"/>
+    <param name="publish_rate" value="50.0"/>
+  </node>
+
+</launch>

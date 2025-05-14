@@ -54,21 +54,21 @@ public:
   }
 };
 
-class PoseObstaclePredictor {
+class FOVObstaclePredictor {
 public:
-  PoseObstaclePredictor()
+  FOVObstaclePredictor()
    : nh_(), pnh_("~"),
      kf_(1.0,0.1,1.0, 0.1,0.01,0.1)
   {
     pnh_.param("prediction_dt",  pred_dt_,           0.5);
     pnh_.param("publish_rate",   pub_rate_,          20.0);
     pnh_.param("text_size_scale", text_size_scale_,   0.2);
-    pose_sub_    = nh_.subscribe("/pose_in",    10, &PoseObstaclePredictor::poseCB,   this);
-    markers_sub_ = nh_.subscribe("/markers_in", 10, &PoseObstaclePredictor::markerCB,this);
+    pose_sub_    = nh_.subscribe("/pose_in",    10, &FOVObstaclePredictor::poseCB,   this);
+    markers_sub_ = nh_.subscribe("/markers_in", 10, &FOVObstaclePredictor::markerCB,this);
     pub_         = nh_.advertise<visualization_msgs::MarkerArray>("/predicted_markers", 1);
     timer_       = nh_.createTimer(
                      ros::Duration(1.0/pub_rate_),
-                     &PoseObstaclePredictor::timerCB, this);
+                     &FOVObstaclePredictor::timerCB, this);
   }
 
 private:
@@ -191,8 +191,8 @@ private:
 };
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "pose_obstacle_predictor");
-  PoseObstaclePredictor node;
+  ros::init(argc, argv, "fov_obstacle_predictor_node");
+  FOVObstaclePredictor node;
   ros::spin();
   return 0;
 }

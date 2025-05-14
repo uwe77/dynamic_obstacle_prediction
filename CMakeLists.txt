@@ -220,11 +220,11 @@ include_directories(${EIGEN3_INCLUDE_DIRS})
 
 
 add_executable(pointcloud_cluster src/pointcloud_cluster.cpp)
-add_executable(obstacle_predictor_node src/dynamic_obstacle_prediction_via_kalman_filter.cpp)
-add_executable(local_obstacle_predictor src/local_prediction_via_kalman_filter.cpp)
+add_executable(dynamic_obstacle_predictor_node src/dynamic_obstacle_prediction_via_kalman_filter.cpp)
+add_executable(fov_obstacle_predictor_node src/fov_obstacle_predictor_via_kalman_filter.cpp)
 target_link_libraries(pointcloud_cluster ${catkin_LIBRARIES})
-target_link_libraries(obstacle_predictor_node ${catkin_LIBRARIES})
-target_link_libraries(local_obstacle_predictor ${catkin_LIBRARIES})
+target_link_libraries(dynamic_obstacle_predictor_node ${catkin_LIBRARIES})
+target_link_libraries(fov_obstacle_predictor_node ${catkin_LIBRARIES})
 ## Add gtest based cpp test target and link libraries
 # catkin_add_gtest(${PROJECT_NAME}-test test/test_js_lidar_crop.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
