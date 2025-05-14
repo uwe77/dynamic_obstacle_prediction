@@ -65,7 +65,7 @@ public:
     pnh_.param("text_size_scale", text_size_scale_,   0.2);
     pose_sub_    = nh_.subscribe("/pose_in",    10, &FOVObstaclePredictor::poseCB,   this);
     markers_sub_ = nh_.subscribe("/markers_in", 10, &FOVObstaclePredictor::markerCB,this);
-    pub_         = nh_.advertise<visualization_msgs::MarkerArray>("/predicted_markers", 1);
+    pub_         = nh_.advertise<visualization_msgs::MarkerArray>("/markers_out", 1);
     timer_       = nh_.createTimer(
                      ros::Duration(1.0/pub_rate_),
                      &FOVObstaclePredictor::timerCB, this);

@@ -54,7 +54,7 @@ public:
     pnh.param("publish_rate",      publish_rate_, 10.0);
 
     markers_sub_ = nh_.subscribe("/markers_in", 10, &DynamicObstaclePredictor::clusterCB, this);
-    pred_pub_    = nh_.advertise<visualization_msgs::MarkerArray>("/predicted_markers", 10);
+    pred_pub_    = nh_.advertise<visualization_msgs::MarkerArray>("/markers_out", 10);
     publish_timer_ = nh_.createTimer(ros::Duration(1.0 / publish_rate_), &DynamicObstaclePredictor::publishTimerCB, this);
   }
 

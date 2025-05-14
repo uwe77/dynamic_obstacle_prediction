@@ -48,9 +48,8 @@ public:
         std::string lidar_frame_default = "lidar_link";
         pnh.param("lidar_frame", lidar_frame_, lidar_frame_default);
 
-        sub_pc_     = nh.subscribe("/lidar_points", 1, &PointCloudClusterNode::cloudCb, this);
-        pub_cloud_  = nh.advertise<sensor_msgs::PointCloud2>   ("/clustered_cloud", 1);
-        pub_markers_= nh.advertise<visualization_msgs::MarkerArray>("/cluster_markers",1);
+        sub_pc_     = nh.subscribe("/pointcloud_in", 1, &PointCloudClusterNode::cloudCb, this);
+        pub_markers_= nh.advertise<visualization_msgs::MarkerArray>("/markers_out",1);
         timer_      = nh.createTimer(ros::Duration(1.0/pub_rate_), &PointCloudClusterNode::timerCb, this);
 
         srand(static_cast<unsigned>(time(nullptr)));
@@ -67,7 +66,7 @@ public:
 
 private:
     ros::Subscriber sub_pc_;
-    ros::Publisher  pub_cloud_, pub_markers_;
+    ros::Publisher  pub_markers_;
     ros::Timer      timer_;
     tf::TransformListener tf_listener_;
 

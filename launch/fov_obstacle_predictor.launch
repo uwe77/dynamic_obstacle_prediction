@@ -3,11 +3,8 @@
   <node pkg="dynamic_obstacle_prediction" type="fov_obstacle_predictor_node" name="fov_obstacle_predictor_node" output="screen">
     <remap from="/pose_in" to="/gazebo/js/pose" />
     <remap from="/markers_in" to="/predicted_markers" />
-    <remap from="/predicted_markers" to="/predicted_local_markers" />
+    <remap from="/markers_out" to="/predicted_local_markers" />
     <param name="prediction_dt" value="2.0"/>
-    <param name="measurement_noise" value="5.0"/>
-    <param name="process_noise" value="25.0"/>
     <param name="publish_rate" value="50.0"/>
   </node>
-
 </launch>
