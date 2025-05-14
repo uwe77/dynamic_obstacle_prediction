@@ -6,7 +6,7 @@ Real-time LiDAR-based clustering and obstacle motion prediction using Kalman Fil
 
 ## 📦 Package Overview
 
-This ROS package includes three main predictor nodes:
+This ROS package includes four main processing nodes:
 
 ### 🧠 Dynamic Obstacle Predictor (Global Frame)
 
@@ -15,7 +15,7 @@ This ROS package includes three main predictor nodes:
 * Tracks obstacle centroids using 4-state Kalman Filters (`x, y, vx, vy`)
 * Predicts future positions using `ros::Time::now()` (no external pose dependency)
 * Deletes unseen tracks and avoids stale state propagation
-* Publishes predicted obstacle positions to `/predicted_markers`
+* Publishes predicted obstacle positions to `/markers_out`
 * **Parameters**:
 
   * `process_noise`, `measurement_noise`
@@ -28,23 +28,35 @@ This ROS package includes three main predictor nodes:
 * Uses 6-state Kalman Filter (`x, y, yaw, vx, vy, ω`) to track ego vehicle motion
 * Compensates future prediction with ego-motion in local frame
 * Converts clustered obstacles from global frame to ego-local predicted frame
-* Publishes `/predicted_local_markers` with dynamic labeled text markers
+* Publishes `/markers_out` with dynamic labeled text markers
 
 ### 🔎 Point Cloud Clustering Node
 
 **File**: `src/pointcloud_cluster.cpp`
 
-* Performs voxel filtering + Euclidean clustering on raw LiDAR point clouds
+* Receives raw point cloud from `/pointcloud_in`
+* Performs voxel filtering + Euclidean clustering
 * Computes oriented bounding boxes (OBBs) using PCL moment of inertia
-* Applies TF transform from `lidar_frame` to global map
 * Publishes:
 
-  * `/clustered_cloud`, `/cluster_markers`
+  * `/markers_out`: cluster OBB markers
 * **Parameters**:
 
   * `xy_cluster_tolerance`, `z_cluster_tolerance`, `leaf_size`
   * `text_size_scale`, `xy_padding_range`, `max_missed_frames`
   * `lidar_frame`
+
+### 📐 Marker-to-PointCloud Converter
+
+**File**: `src/marker_to_pointcloud_node.cpp`
+
+* Converts `CUBE`-type markers from `/markers_in` into `sensor_msgs/PointCloud2`
+* Uses TF transform lookup to project cubes to global or local frames
+* Publishes reconstructed dense point clouds to `/pointcloud_out`
+* **Parameters**:
+
+  * `xy_scale`, `z_scale`: sampling resolution per cube
+  * `publish_rate`, `target_frame`
 
 ---
 
@@ -62,11 +74,24 @@ This ROS package includes three main predictor nodes:
 
 * Starts LiDAR clusterer node (`pointcloud_cluster_node`)
 
+### 🔹 `marker_to_pointcloud.launch`
+
+* Starts marker converter node with configurable topics and frame settings
+
 ### 🔹 `launch_all.launch`
 
-* Starts all nodes together: clustering, global prediction, FOV transformation
+* Starts all nodes together:
 
-All topics are prefixed with `js` for consistency.
+  * `pointcloud_cluster_node`
+  * `dynamic_obstacle_predictor_node`
+  * `fov_obstacle_predictor_node`
+  * Multiple `marker_to_pointcloud_node` for:
+
+    * `/cluster_markers` → `/cluster_pc`
+    * `/predicted_markers` → `/predicted_pc`
+    * `/predicted_local_markers` → `/fov_pc`
+
+All topics follow standardized naming: `/pointcloud_in`, `/markers_out`, `/markers_in`.
 
 ---
 
@@ -109,19 +134,21 @@ source devel/setup.bash
 
 ## 🧠 Prediction Summary
 
-| Node                              | Kalman State             | Input                         | Output Topic               |
-| --------------------------------- | ------------------------ | ----------------------------- | -------------------------- |
-| `dynamic_obstacle_predictor_node` | `[x, y, vx, vy]`         | Clustered OBBs                | `/predicted_markers`       |
-| `fov_obstacle_predictor_node`     | `[x, y, yaw, vx, vy, ω]` | Vehicle pose + Clustered OBBs | `/predicted_local_markers` |
+| Node                              | Kalman State             | Input Topic          | Output Topic      |
+| --------------------------------- | ------------------------ | -------------------- | ----------------- |
+| `dynamic_obstacle_predictor_node` | `[x, y, vx, vy]`         | `/markers_in`        | `/markers_out`    |
+| `fov_obstacle_predictor_node`     | `[x, y, yaw, vx, vy, ω]` | `/markers_in` + pose | `/markers_out`    |
+| `marker_to_pointcloud_node`       | N/A (cube sampling)      | `/markers_in`        | `/pointcloud_out` |
 
 ---
 
 ## 🧰 Development Notes
 
-* All ROS nodes and markers renamed for modular clarity
-* Tracked objects are uniquely labeled in RViz for interpretability
-* Lifecycle management ensures clean removal of old/unseen tracks
-* Local prediction fully compensates for ego-motion drift using 6-state KF
+* All ROS topics use standardized I/O naming
+* Marker output can be reconstructed into point clouds for downstream processing
+* Multi-agent and namespaced deployment supported via launch args
+* Local prediction compensates for ego-motion drift using 6-state KF
+* Unused publishers and flags removed for cleaner runtime behavior
 
 ---
 
