@@ -158,7 +158,7 @@ private:
       out.markers.push_back(pm);
       // text marker
       visualization_msgs::Marker t=pm;
-      t.ns    = "predicted_labels";
+      t.ns    = "fov_obs_labels";
       t.type  = t.TEXT_VIEW_FACING;
       t.pose.position.z += 0.1;
       // dynamic text size
@@ -169,7 +169,7 @@ private:
       t.color.r = t.color.g = t.color.b = 1.0f;
       t.color.a = 1.0f;
       std::ostringstream ss;
-      ss << "ID:"<<pm.id<<"(pred)";
+      ss << "ID:"<<pm.id<<"(fov)";
       t.text     = ss.str();
       t.lifetime = ros::Duration(0);
       out.markers.push_back(t);
