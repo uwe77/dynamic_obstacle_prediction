@@ -3,4 +3,22 @@
     <include file="$(find dynamic_obstacle_prediction)/launch/pointcloud_cluster.launch" />
     <include file="$(find dynamic_obstacle_prediction)/launch/fov_obstacle_predictor.launch" />
     <include file="$(find dynamic_obstacle_prediction)/launch/dynamic_obstacle_predictor.launch" />
+    <include file="$(find dynamic_obstacle_prediction)/launch/marker_to_pointcloud.launch">
+        <arg name="namespace"        value="cluster"/>
+        <arg name="marker_topic"     value="/cluster_markers"/>
+        <arg name="pointcloud_topic" value="/cluster_pc"/>
+        <arg name="target_frame"     value="js/front_lidar_link"/>
+    </include>
+    <include file="$(find dynamic_obstacle_prediction)/launch/marker_to_pointcloud.launch">
+        <arg name="namespace"        value="predicted"/>
+        <arg name="marker_topic"     value="/predicted_markers"/>
+        <arg name="pointcloud_topic" value="/predicted_pc"/>
+        <arg name="target_frame"     value="js/front_lidar_link"/>
+    </include>
+    <include file="$(find dynamic_obstacle_prediction)/launch/marker_to_pointcloud.launch">
+        <arg name="namespace"        value="fov"/>
+        <arg name="marker_topic"     value="/predicted_local_markers"/>
+        <arg name="pointcloud_topic" value="/fov_pc"/>
+        <arg name="target_frame"     value="js/front_lidar_link"/>
+    </include>
 </launch>
