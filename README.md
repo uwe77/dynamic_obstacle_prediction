@@ -8,7 +8,27 @@ Real-time LiDAR-based clustering and obstacle motion prediction using Kalman Fil
 
 ## 📦 Package Overview
 
-This ROS package includes four main processing nodes:
+This ROS package processes sensor data in the following sequential pipeline:
+
+**PointCloud → Clustering → Global Prediction → Local Prediction → Marker-to-PointCloud**
+
+### 🔎 Point Cloud Clustering Node
+
+**File**: `src/pointcloud_cluster.cpp`
+
+* Receives raw point cloud from `/pointcloud_in`
+* Performs voxel filtering + Euclidean clustering
+* Computes oriented bounding boxes (OBBs) using PCL moment of inertia
+* Publishes:
+
+  * `/markers_out`: cluster OBB markers
+* **Parameters**:
+
+  * `xy_cluster_tolerance`, `z_cluster_tolerance`, `leaf_size`
+  * `text_size_scale`, `xy_padding_range`, `max_missed_frames`
+  * `lidar_frame`
+
+![Clustering](images/cluster.gif)
 
 ### 🧠 Dynamic Obstacle Predictor (Global Frame)
 
@@ -36,24 +56,6 @@ This ROS package includes four main processing nodes:
 
 ![FOV Prediction](images/fov.gif)
 
-### 🔎 Point Cloud Clustering Node
-
-**File**: `src/pointcloud_cluster.cpp`
-
-* Receives raw point cloud from `/pointcloud_in`
-* Performs voxel filtering + Euclidean clustering
-* Computes oriented bounding boxes (OBBs) using PCL moment of inertia
-* Publishes:
-
-  * `/markers_out`: cluster OBB markers
-* **Parameters**:
-
-  * `xy_cluster_tolerance`, `z_cluster_tolerance`, `leaf_size`
-  * `text_size_scale`, `xy_padding_range`, `max_missed_frames`
-  * `lidar_frame`
-
-![Clustering](images/cluster.gif)
-
 ### 📐 Marker-to-PointCloud Converter
 
 **File**: `src/marker_to_pointcloud_node.cpp`
@@ -72,6 +74,11 @@ This ROS package includes four main processing nodes:
 
 Each launch file supports parameterized arguments for topic remapping and configuration.
 
+### 🔹 `pointcloud_cluster.launch`
+
+* Starts LiDAR clusterer node (`pointcloud_cluster_node`)
+* Fully parameterized for clustering thresholds, visualization scale, frame setup
+
 ### 🔹 `dynamic_obstacle_predictor.launch`
 
 * Starts global frame predictor (`dynamic_obstacle_predictor_node`)
@@ -81,11 +88,6 @@ Each launch file supports parameterized arguments for topic remapping and config
 
 * Starts local frame predictor (`fov_obstacle_predictor_node`)
 * Supports args: input pose/topic remaps, TF frame, output markers
-
-### 🔹 `pointcloud_cluster.launch`
-
-* Starts LiDAR clusterer node (`pointcloud_cluster_node`)
-* Fully parameterized for clustering thresholds, visualization scale, frame setup
 
 ### 🔹 `marker_to_pointcloud.launch`
 
@@ -147,6 +149,7 @@ source devel/setup.bash
 
 | Node                              | Kalman State             | Input Topic          | Output Topic      |
 | --------------------------------- | ------------------------ | -------------------- | ----------------- |
+| `pointcloud_cluster_node`         | N/A                      | `/pointcloud_in`     | `/markers_out`    |
 | `dynamic_obstacle_predictor_node` | `[x, y, vx, vy]`         | `/markers_in`        | `/markers_out`    |
 | `fov_obstacle_predictor_node`     | `[x, y, yaw, vx, vy, ω]` | `/markers_in` + pose | `/markers_out`    |
 | `marker_to_pointcloud_node`       | N/A (cube sampling)      | `/markers_in`        | `/pointcloud_out` |
@@ -155,11 +158,12 @@ source devel/setup.bash
 
 ## 🧰 Development Notes
 
-* All ROS topics use standardized I/O naming
-* Marker output can be reconstructed into point clouds for downstream processing
+* Standardized I/O ROS topics for consistency
+* Data flow: PointCloud → Cluster Markers → Predicted Markers → Local Markers
+* Marker topics at each stage can be reconstructed into point clouds
 * Multi-agent and namespaced deployment supported via launch args
 * Local prediction compensates for ego-motion drift using 6-state KF
-* Launch files are fully parameterized for flexibility
+* Launch files fully parameterized for flexibility
 * Visual representations (`*.gif`) included for clarity
 
 ---
