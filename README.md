@@ -2,6 +2,8 @@
 
 Real-time LiDAR-based clustering and obstacle motion prediction using Kalman Filtering, TF transformations, and RViz visualization — designed for safe navigation, planning, and semantic mapping applications.
 
+![Overview](images/all.gif)
+
 ---
 
 ## 📦 Package Overview
@@ -21,6 +23,8 @@ This ROS package includes four main processing nodes:
   * `process_noise`, `measurement_noise`
   * `publish_rate`, `prediction_dt`
 
+![Dynamic Prediction](images/dynamic.gif)
+
 ### 🧭 FOV Obstacle Predictor (Local Frame)
 
 **File**: `src/fov_obstacle_predictor_via_kalman_filter.cpp`
@@ -29,6 +33,8 @@ This ROS package includes four main processing nodes:
 * Compensates future prediction with ego-motion in local frame
 * Converts clustered obstacles from global frame to ego-local predicted frame
 * Publishes `/markers_out` with dynamic labeled text markers
+
+![FOV Prediction](images/fov.gif)
 
 ### 🔎 Point Cloud Clustering Node
 
@@ -46,6 +52,8 @@ This ROS package includes four main processing nodes:
   * `text_size_scale`, `xy_padding_range`, `max_missed_frames`
   * `lidar_frame`
 
+![Clustering](images/cluster.gif)
+
 ### 📐 Marker-to-PointCloud Converter
 
 **File**: `src/marker_to_pointcloud_node.cpp`
@@ -62,17 +70,22 @@ This ROS package includes four main processing nodes:
 
 ## 🚀 Launch Files
 
+Each launch file supports parameterized arguments for topic remapping and configuration.
+
 ### 🔹 `dynamic_obstacle_predictor.launch`
 
 * Starts global frame predictor (`dynamic_obstacle_predictor_node`)
+* Supports args: input/output topics, filter noise, rate, prediction horizon
 
 ### 🔹 `fov_obstacle_predictor.launch`
 
 * Starts local frame predictor (`fov_obstacle_predictor_node`)
+* Supports args: input pose/topic remaps, TF frame, output markers
 
 ### 🔹 `pointcloud_cluster.launch`
 
 * Starts LiDAR clusterer node (`pointcloud_cluster_node`)
+* Fully parameterized for clustering thresholds, visualization scale, frame setup
 
 ### 🔹 `marker_to_pointcloud.launch`
 
@@ -80,18 +93,16 @@ This ROS package includes four main processing nodes:
 
 ### 🔹 `launch_all.launch`
 
-* Starts all nodes together:
+* Starts full perception pipeline:
 
   * `pointcloud_cluster_node`
   * `dynamic_obstacle_predictor_node`
   * `fov_obstacle_predictor_node`
-  * Multiple `marker_to_pointcloud_node` for:
+  * Multiple `marker_to_pointcloud_node` instances:
 
     * `/cluster_markers` → `/cluster_pc`
     * `/predicted_markers` → `/predicted_pc`
     * `/predicted_local_markers` → `/fov_pc`
-
-All topics follow standardized naming: `/pointcloud_in`, `/markers_out`, `/markers_in`.
 
 ---
 
@@ -148,7 +159,8 @@ source devel/setup.bash
 * Marker output can be reconstructed into point clouds for downstream processing
 * Multi-agent and namespaced deployment supported via launch args
 * Local prediction compensates for ego-motion drift using 6-state KF
-* Unused publishers and flags removed for cleaner runtime behavior
+* Launch files are fully parameterized for flexibility
+* Visual representations (`*.gif`) included for clarity
 
 ---
 
