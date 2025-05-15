@@ -32,17 +32,23 @@
         <arg name="marker_topic"            value="/cluster/markers"/>
         <arg name="pointcloud_topic"        value="/cluster/pc"/>
         <arg name="target_frame"            value="js/front_lidar_link"/>
+        <arg name="xy_scale"                value="1"/>
+        <arg name="z_scale"                 value="2"/>
     </include>
     <include file="$(find dynamic_obstacle_prediction)/launch/marker_to_pointcloud.launch">
         <arg name="namespace"               value="future"/>
         <arg name="marker_topic"            value="/future/markers"/>
         <arg name="pointcloud_topic"        value="/future/pc"/>
         <arg name="target_frame"            value="js/front_lidar_link"/>
+        <arg name="xy_scale"                value="1"/>
+        <arg name="z_scale"                 value="2"/>
     </include>
     <include file="$(find dynamic_obstacle_prediction)/launch/marker_to_pointcloud.launch">
         <arg name="namespace"               value="future/fov"/>
         <arg name="marker_topic"            value="/future/fov/markers"/>
         <arg name="pointcloud_topic"        value="/future/fov/pc"/>
         <arg name="target_frame"            value="js/front_lidar_link"/>
+        <arg name="xy_scale"                value="1"/>
+        <arg name="z_scale"                 value="2"/>
     </include>
 </launch>
