@@ -1,12 +1,26 @@
 <?xml version="1.0"?>
 <launch>
-  <node pkg="dynamic_obstacle_prediction" type="pointcloud_cluster" name="pointcloud_cluster_node" output="screen">
-    <remap from="/pointcloud_in" to="/js/velodyne/lidar_crop" />
-    <remap from="/markers_out" to="/cluster_markers" />
-    <param name="lidar_frame" value="js/front_lidar_link"/>
-    <param name="z_cluster_tolerance" value="6.0"/>
-    <param name="xy_cluster_tolerance" value="6.0"/>
-    <param name="publish_rate" value="10.0"/>
-    <param name="xy_pedding_range" value="10"/>
-  </node>
+  <arg name="namespace" default=""/>
+  <arg name="pointcloud_in_topic" default="/pointcloud_in"/>
+  <arg name="markers_out_topic" default="/markers_out"/>
+  <arg name="lidar_frame" default="lidar_link"/>
+  <arg name="z_cluster_tolerance" default="6.0"/>
+  <arg name="xy_cluster_tolerance" default="6.0"/>
+  <arg name="xy_pedding_range" default="10.0"/>
+  <arg name="publish_rate" default="10.0"/>
+
+  <group ns="$(arg namespace)">
+    <node name="pointcloud_cluster_node"
+          pkg="dynamic_obstacle_prediction" 
+          type="pointcloud_cluster"  
+          output="screen">
+      <remap from="/pointcloud_in" to="$(arg pointcloud_in_topic)" />
+      <remap from="/markers_out" to="$(arg markers_out_topic)" />
+      <param name="lidar_frame" value="$(arg lidar_frame)"/>
+      <param name="z_cluster_tolerance" value="$(arg z_cluster_tolerance)"/>
+      <param name="xy_cluster_tolerance" value="$(arg xy_cluster_tolerance)"/>
+      <param name="xy_pedding_range" value="$(arg xy_pedding_range)"/>
+      <param name="publish_rate" value="$(arg publish_rate)"/>
+    </node>
+  </group>
 </launch>
