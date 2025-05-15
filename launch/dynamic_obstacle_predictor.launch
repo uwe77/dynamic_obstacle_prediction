@@ -1,11 +1,25 @@
 <?xml version="1.0"?>
 <launch>
-  <node pkg="dynamic_obstacle_prediction" type="dynamic_obstacle_predictor_node" name="dynamic_obstacle_predictor_node" output="screen">
-    <remap from="/markers_in" to="/cluster_markers" />
-    <remap from="/markers_out" to="/predicted_markers" />
-    <param name="prediction_dt" value="2.0"/>
-    <param name="measurement_noise" value="5.0"/>
-    <param name="process_noise" value="25.0"/>
-    <param name="publish_rate" value="50.0"/>
-  </node>
+
+  <arg name="namespace" default=""/>
+  <arg name="markers_in_topic" default="/markers_in"/>
+  <arg name="markers_out_topic" default="/markers_out"/>
+  <arg name="prediction_dt" default="2.0"/>
+  <arg name="measurement_noise" default="5.0"/>
+  <arg name="process_noise" default="25.0"/>
+  <arg name="publish_rate" default="50.0"/>
+
+  <group ns="$(arg namespace)">
+    <node name="dynamic_obstacle_predictor_node"
+          pkg="dynamic_obstacle_prediction" 
+          type="dynamic_obstacle_predictor_node" 
+          output="screen">
+      <remap from="/markers_in" to="$(arg markers_in_topic)" />
+      <remap from="/markers_out" to="$(arg markers_out_topic)" />
+      <param name="prediction_dt" value="$(arg prediction_dt)"/>
+      <param name="measurement_noise" value="$(arg measurement_noise)"/>
+      <param name="process_noise" value="$(arg process_noise)"/>
+      <param name="publish_rate" value="$(arg publish_rate)"/>
+    </node>
+  </group>
 </launch>
