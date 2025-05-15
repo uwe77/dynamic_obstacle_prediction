@@ -1,24 +1,48 @@
 <?xml version="1.0"?>
 <launch>
-    <include file="$(find dynamic_obstacle_prediction)/launch/pointcloud_cluster.launch" />
-    <include file="$(find dynamic_obstacle_prediction)/launch/fov_obstacle_predictor.launch" />
-    <include file="$(find dynamic_obstacle_prediction)/launch/dynamic_obstacle_predictor.launch" />
-    <include file="$(find dynamic_obstacle_prediction)/launch/marker_to_pointcloud.launch">
-        <arg name="namespace"        value="cluster"/>
-        <arg name="marker_topic"     value="/cluster_markers"/>
-        <arg name="pointcloud_topic" value="/cluster_pc"/>
-        <arg name="target_frame"     value="js/front_lidar_link"/>
+    <include file="$(find dynamic_obstacle_prediction)/launch/pointcloud_cluster.launch">
+        <arg name="namespace"               value="cluster"/>
+        <arg name="pointcloud_in_topic"     value="/js/velodyne/lidar_crop"/>
+        <arg name="markers_out_topic"       value="/cluster/markers"/>
+        <arg name="lidar_frame"             value="js/front_lidar_link"/>
+        <arg name="z_cluster_tolerance"     value="6.0"/>
+        <arg name="xy_cluster_tolerance"    value="6.0"/>
+        <arg name="xy_pedding_range"        value="10.0"/>
+        <arg name="publish_rate"            value="10"/>
+    </include>
+    <include file="$(find dynamic_obstacle_prediction)/launch/dynamic_obstacle_predictor.launch">
+        <arg name="namespace"               value="future"/>
+        <arg name="markers_in_topic"        value="/cluster/markers"/>
+        <arg name="markers_out_topic"       value="/future/markers"/>
+        <arg name="prediction_dt"           value="2.0"/>
+        <arg name="measurement_noise"       value="5.0"/>
+        <arg name="process_noise"           value="25.0"/>
+        <arg name="publish_rate"            value="50.0"/>
+    </include>
+    <include file="$(find dynamic_obstacle_prediction)/launch/fov_obstacle_predictor.launch">
+        <arg name="namespace"               value="future/fov"/>
+        <arg name="pose_in_topic"           value="/gazebo/js/pose"/>
+        <arg name="markers_in_topic"        value="/future/markers"/>
+        <arg name="markers_out_topic"       value="/future/fov/markers"/>
+        <arg name="prediction_dt"           value="2.0"/>
+        <arg name="publish_rate"            value="50.0"/>
     </include>
     <include file="$(find dynamic_obstacle_prediction)/launch/marker_to_pointcloud.launch">
-        <arg name="namespace"        value="predicted"/>
-        <arg name="marker_topic"     value="/predicted_markers"/>
-        <arg name="pointcloud_topic" value="/predicted_pc"/>
-        <arg name="target_frame"     value="js/front_lidar_link"/>
+        <arg name="namespace"               value="cluster"/>
+        <arg name="marker_topic"            value="/cluster/markers"/>
+        <arg name="pointcloud_topic"        value="/cluster/pc"/>
+        <arg name="target_frame"            value="js/front_lidar_link"/>
     </include>
     <include file="$(find dynamic_obstacle_prediction)/launch/marker_to_pointcloud.launch">
-        <arg name="namespace"        value="fov"/>
-        <arg name="marker_topic"     value="/predicted_local_markers"/>
-        <arg name="pointcloud_topic" value="/fov_pc"/>
-        <arg name="target_frame"     value="js/front_lidar_link"/>
+        <arg name="namespace"               value="future"/>
+        <arg name="marker_topic"            value="/future/markers"/>
+        <arg name="pointcloud_topic"        value="/future/pc"/>
+        <arg name="target_frame"            value="js/front_lidar_link"/>
+    </include>
+    <include file="$(find dynamic_obstacle_prediction)/launch/marker_to_pointcloud.launch">
+        <arg name="namespace"               value="future/fov"/>
+        <arg name="marker_topic"            value="/future/fov/markers"/>
+        <arg name="pointcloud_topic"        value="/future/fov/pc"/>
+        <arg name="target_frame"            value="js/front_lidar_link"/>
     </include>
 </launch>
