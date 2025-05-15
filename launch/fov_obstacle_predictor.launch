@@ -1,10 +1,22 @@
 <?xml version="1.0"?>
 <launch>
-  <node pkg="dynamic_obstacle_prediction" type="fov_obstacle_predictor_node" name="fov_obstacle_predictor_node" output="screen">
-    <remap from="/pose_in" to="/gazebo/js/pose" />
-    <remap from="/markers_in" to="/predicted_markers" />
-    <remap from="/markers_out" to="/predicted_local_markers" />
-    <param name="prediction_dt" value="2.0"/>
-    <param name="publish_rate" value="50.0"/>
-  </node>
+  <arg name="namespace" default=""/>
+  <arg name="pose_in_topic" default="/pose_in"/>
+  <arg name="markers_in_topic" default="/markers_in"/>
+  <arg name="markers_out_topic" default="/markers_out"/>
+  <arg name="prediction_dt" default="2.0"/>
+  <arg name="publish_rate" default="50.0"/>
+
+  <group ns="$(arg namespace)">
+    <node name="fov_obstacle_predictor_node" 
+          pkg="dynamic_obstacle_prediction" 
+          type="fov_obstacle_predictor_node" 
+          output="screen">
+      <remap from="/pose_in" to="$(arg pose_in_topic)" />
+      <remap from="/markers_in" to="$(arg markers_in_topic)" />
+      <remap from="/markers_out" to="$(arg markers_out_topic)" />
+      <param name="prediction_dt" value="$(arg prediction_dt)" />
+      <param name="publish_rate" value="$(arg publish_rate)" />
+    </node>
+  </group>
 </launch>
